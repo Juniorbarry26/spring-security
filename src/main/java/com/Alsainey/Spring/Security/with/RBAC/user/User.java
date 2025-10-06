@@ -1,11 +1,13 @@
 package com.Alsainey.Spring.Security.with.RBAC.user;
 
+import com.Alsainey.Spring.Security.with.RBAC.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.security.auth.Subject;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,8 +45,8 @@ public class User implements UserDetails, Principal {
     private boolean enabled;
 
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    private List<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
@@ -64,7 +67,10 @@ public class User implements UserDetails, Principal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
