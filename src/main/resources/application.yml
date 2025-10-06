@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Spring-security-with-RBAC
+
+  profiles:
+    active: dev
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+
+server:
+  servlet:
+    context-path: /api/v1
